@@ -100,14 +100,21 @@ or
             yum -y groupinstall "Development Tools"
             yum -y install pcre-devel xz-devel
     * Windows: It's complicated. See [this wiki page](https://github.com/ggreer/the_silver_searcher/wiki/Windows).
-2. Run the build script (which just runs aclocal, automake, etc):
 
-        ./build.sh
+2. Run configure:
 
-  On Windows:
+  On Mac OS X:
 
-        mingw32-make -f Makefile.w32
-3. Make install:
+	./configure --prefix=/opt/local
+
+  On Ubuntu/Debian:
+
+	./configure --prefix=/usr/local
+3. Make:
+
+	make -j4
+
+4. Make install:
 
         sudo make install
 
