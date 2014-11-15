@@ -15,9 +15,10 @@
 #include "log.h"
 #include "util.h"
 
-const char *color_line_number = "\033[1;33m"; /* yellow with black background */
-const char *color_match = "\033[30;43m";      /* black with yellow background */
-const char *color_path = "\033[1;32m";        /* bold green */
+const char *color_line_number = "\033[0;32m"; /* yellow with black background */
+const char *color_match = "\033[1;31m";      /* black with yellow background */
+const char *color_path = "\033[0;35m";        /* bold green */
+const char *pager = "less -FRSX"; /* less as pager just like configured in git */
 
 /* TODO: try to obey out_fd? */
 void usage(void) {
@@ -120,12 +121,14 @@ void init_options(void) {
     opts.color_path = ag_strdup(color_path);
     opts.color_match = ag_strdup(color_match);
     opts.color_line_number = ag_strdup(color_line_number);
+    opts.pager = ag_strdup(pager);
 }
 
 void cleanup_options(void) {
     free(opts.color_path);
     free(opts.color_match);
     free(opts.color_line_number);
+    free(opts.pager);
 
     if (opts.query) {
         free(opts.query);
