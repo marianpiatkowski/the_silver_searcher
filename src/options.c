@@ -15,9 +15,9 @@
 #include "log.h"
 #include "util.h"
 
-const char *color_line_number = "\033[0;32m"; /* yellow with black background */
-const char *color_match = "\033[1;31m";      /* black with yellow background */
-const char *color_path = "\033[0;35m";        /* bold green */
+const char *color_line_number = "\033[0;32m"; /* green */
+const char *color_match = "\033[1;31m";      /* bold red */
+const char *color_path = "\033[0;35m";        /* magenta */
 const char *pager = "less -FRSX"; /* less as pager just like configured in git */
 
 /* TODO: try to obey out_fd? */
