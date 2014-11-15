@@ -103,13 +103,14 @@ or
 
 2. Run configure:
 
-  On Mac OS X:
+    * On Mac OS X:
 
 	./configure --prefix=/opt/local
 
-  On Ubuntu/Debian:
+    * On Ubuntu/Debian:
 
 	./configure --prefix=/usr/local
+
 3. Make:
 
 	make -j4
