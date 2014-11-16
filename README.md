@@ -101,7 +101,17 @@ or
             yum -y install pcre-devel xz-devel
     * Windows: It's complicated. See [this wiki page](https://github.com/ggreer/the_silver_searcher/wiki/Windows).
 
-2. Run configure:
+2. Set up Autotools:
+
+    aclocal
+
+    autoconf
+
+    autoheader
+
+    automake --add-missing
+
+3. Run configure:
 
     * On Mac OS X:
 
@@ -111,11 +121,11 @@ or
 
 	./configure --prefix=/usr/local
 
-3. Make:
+4. Make:
 
 	make -j4
 
-4. Make install:
+5. Make install:
 
         sudo make install
 
