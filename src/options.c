@@ -369,6 +369,13 @@ void parse_options(int argc, char **argv, char **base_paths[], char **paths[]) {
                 break;
             case 'n':
                 opts.recurse_dirs = 0;
+                printf("  ############################################ \n");
+                printf("  # NOTE: \n");
+                printf("  # You are using the -n option in ag. \n");
+                printf("  # This performs a search \033[4mwithout recursion\033[0m. \n");
+                printf("  # If you intended to print only the line number of the ouput, \n");
+                printf("  # be sure to remember that this happens automatically in ag. \n");
+                printf("  ############################################ \n");
                 break;
             case 'p':
                 opts.path_to_agignore = optarg;
