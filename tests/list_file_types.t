@@ -18,6 +18,12 @@ Language types are output:
     --batch
         .bat  .cmd
   
+    --bitbake
+        .bb  .bbappend  .bbclass  .inc
+  
+    --bro
+        .bro  .bif
+  
     --cc
         .c  .h  .xs
   
@@ -25,13 +31,16 @@ Language types are output:
         .cfc  .cfm  .cfml
   
     --clojure
-        .clj  .cljs  .cljx
+        .clj  .cljs  .cljc  .cljx
   
     --coffee
-        .coffee
+        .coffee  .cjsx
   
     --cpp
         .cpp  .cc  .C  .cxx  .m  .hpp  .hh  .h  .H  .hxx
+  
+    --crystal
+        .cr  .ecr
   
     --csharp
         .cs
@@ -42,14 +51,23 @@ Language types are output:
     --delphi
         .pas  .int  .dfm  .nfm  .dof  .dpk  .dproj  .groupproj  .bdsgroup  .bdsproj
   
+    --ebuild
+        .ebuild  .eclass
+  
     --elisp
         .el
+  
+    --elixir
+        .ex  .exs
   
     --erlang
         .erl  .hrl
   
     --fortran
         .f  .f77  .f90  .f95  .f03  .for  .ftn  .fpp
+  
+    --fsharp
+        .fs  .fsi  .fsx
   
     --gettext
         .po  .pot  .mo
@@ -82,7 +100,7 @@ Language types are output:
         .java  .properties
   
     --js
-        .js
+        .js  .jsx
   
     --json
         .json
@@ -108,6 +126,9 @@ Language types are output:
     --make
         .Makefiles  .mk  .mak
   
+    --mako
+        .mako
+  
     --markdown
         .markdown  .mdown  .mdwn  .mkdn  .mkd  .md
   
@@ -117,6 +138,15 @@ Language types are output:
     --matlab
         .m
   
+    --mathematica
+        .m  .wl
+  
+    --mercury
+        .m  .moo
+  
+    --nim
+        .nim
+  
     --objc
         .m  .h
   
@@ -124,7 +154,7 @@ Language types are output:
         .mm  .h
   
     --ocaml
-        .ml  .mli
+        .ml  .mli  .mll  .mly
   
     --octave
         .m
@@ -138,17 +168,35 @@ Language types are output:
     --php
         .php  .phpt  .php3  .php4  .php5  .phtml
   
+    --pike
+        .pike  .pmod
+  
     --plone
         .pt  .cpt  .metadata  .cpy  .py
+  
+    --puppet
+        .pp
   
     --python
         .py
   
+    --racket
+        .rkt  .ss  .scm
+  
     --rake
         .Rakefiles
   
+    --restructuredtext
+        .rst
+  
     --rs
         .rs
+  
+    --r
+        .R  .Rmd  .Rnw  .Rtex  .Rrst
+  
+    --rdoc
+        .rdoc
   
     --ruby
         .rb  .rhtml  .rjs  .rxml  .erb  .rake  .spec
@@ -174,6 +222,9 @@ Language types are output:
     --smalltalk
         .st
   
+    --sml
+        .sml  .fun  .mlb  .sig
+  
     --sql
         .sql  .ctl
   
@@ -192,8 +243,17 @@ Language types are output:
     --tt
         .tt  .tt2  .ttml
   
+    --toml
+        .toml
+  
+    --vala
+        .vala  .vapi
+  
     --vb
         .bas  .cls  .frm  .ctl  .vb  .resx
+  
+    --velocity
+        .vm  .vtl  .vsl
   
     --verilog
         .v  .vh  .sv
@@ -203,6 +263,12 @@ Language types are output:
   
     --vim
         .vim
+  
+    --wsdl
+        .wsdl
+  
+    --wadl
+        .wadl
   
     --xml
         .xml  .dtd  .xsl  .xslt  .ent

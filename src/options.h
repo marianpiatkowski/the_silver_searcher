@@ -11,6 +11,7 @@
 #define DEFAULT_CONTEXT_LEN 2
 #define DEFAULT_MAX_SEARCH_DEPTH 25
 enum case_behavior {
+    CASE_DEFAULT, /* Changes to CASE_SMART at the end of option parsing */
     CASE_SENSITIVE,
     CASE_INSENSITIVE,
     CASE_SMART,
@@ -40,6 +41,7 @@ typedef struct {
     char *color_line_number;
     char *color_match;
     char *color_path;
+    int color_win_ansi;
     int column;
     int context;
     int follow_symlinks;
@@ -47,8 +49,11 @@ typedef struct {
     int literal;
     int literal_starts_wordchar;
     int literal_ends_wordchar;
-    int max_matches_per_file;
+    size_t max_matches_per_file;
     int max_search_depth;
+    int multiline;
+    int one_dev;
+    int only_matching;
     char path_sep;
     char *path_to_agignore;
     int print_break;
@@ -76,7 +81,9 @@ typedef struct {
     char *pager;
     int paths_len;
     int parallel;
+    int use_thread_affinity;
     int vimgrep;
+    size_t width;
     int word_regexp;
     int workers;
 } cli_options;

@@ -48,7 +48,8 @@ static void *decompress_zlib(const void *buf, const int buf_len,
     }
 
     stream.avail_in = buf_len;
-    stream.next_in = buf;
+    /* Explicitly cast away the const-ness of buf */
+    stream.next_in = (Bytef *)buf;
 
     pagesize = getpagesize();
     result_size = ((buf_len + pagesize - 1) & ~(pagesize - 1));
@@ -190,7 +191,6 @@ error_out:
 /* This function is very hot. It's called on every file when zip is enabled. */
 void *decompress(const ag_compression_type zip_type, const void *buf, const int buf_len,
                  const char *dir_full_path, int *new_buf_len) {
-
     switch (zip_type) {
 #ifdef HAVE_ZLIB_H
         case AG_GZIP:

@@ -26,6 +26,11 @@ Recursively search for PATTERN in PATH. Like grep or ack, but faster.
   * `--[no]break`:
     Print a newline between matches in different files. Enabled by default.
 
+  * `-c --count`:
+    Only print the number of matches in each file.
+    Note: This is the number of matches, **not** the number of matching lines.
+    Pipe output to `wc -l` if you want the number of matching lines.
+
   * `--[no]color`:
     Print color codes in results. Enabled by default.
 
@@ -48,10 +53,16 @@ Recursively search for PATTERN in PATH. Like grep or ack, but faster.
     Output ridiculous amounts of debugging info. Probably not useful.
 
   * `--depth NUM`:
-    Search up to NUM directories deep. Default is 25.
+    Search up to NUM directories deep, -1 for unlimited. Default is 25.
+
+  * `--[no]filename`:
+    Print file names. Enabled by default, except when searching a single file.
 
   * `-f --follow`:
     Follow symlinks.
+
+  * `-F --fixed-strings`:
+    Alias for --literal for compatibility with grep.
 
   * `--[no]group`:
     The default, `--group`, lumps multiple matches in the same file
@@ -69,7 +80,7 @@ Recursively search for PATTERN in PATH. Like grep or ack, but faster.
     Print filenames above matching contents.
 
   * `--hidden`:
-    Search hidden files. This option obeys ignore files.
+    Search hidden files. This option obeys ignored files.
 
   * `--ignore PATTERN`:
     Ignore files/directories whose names match this pattern. Literal
@@ -92,11 +103,17 @@ Recursively search for PATTERN in PATH. Like grep or ack, but faster.
     See `FILE TYPES` below.
 
   * `-m --max-count NUM`:
-    Skip the rest of a file after NUM matches. Default is 10,000.
+    Skip the rest of a file after NUM matches. Default is 0, which never skips.
 
-  * `--no-numbers`:
-    Don't show line numbers.
-  
+  * `--[no]multiline`:
+    Match regexes across newlines. Enabled by default.
+
+  * `--[no]numbers`:
+    Print line numbers. Default is to omit line numbers when searching streams.
+
+  * `-o --only-matching`:
+    Print only the matching part of the lines.
+
   * `-p --path-to-agignore STRING`:
     Provide a path to a specific .agignore file.
 
@@ -129,6 +146,9 @@ Recursively search for PATTERN in PATH. Like grep or ack, but faster.
   * `--stats`:
     Print stats (files scanned, time taken, etc).
 
+  * `--stats-only`:
+    Print stats (files scanned, time taken, etc) and nothing else.
+
   * `-t --all-text`:
     Search all text files. This doesn't include hidden files.
 
@@ -144,13 +164,13 @@ Recursively search for PATTERN in PATH. Like grep or ack, but faster.
     Match every line *not* containing the specified pattern.
 
   * `--vimgrep`:
-    Output results like vim's `:vimgrep /pattern/g` would (it reports every match on the line).   
+    Output results like vim's `:vimgrep /pattern/g` would (it reports every match on the line).
     Here's a ~/.vimrc configuration example:
 
-    `set grepprg=ag\ --vimgrep\ $*`   
+    `set grepprg=ag\ --vimgrep\ $*`
     `set grepformat=%f:%l:%c:%m`
 
-    Then use `:grep` to grep for something.   
+    Then use `:grep` to grep for something.
     Then use `:copen`, `:cn`, `:cp`, etc. to navigate through the matches.
 
   * `-w --word-regexp`:
@@ -169,8 +189,8 @@ Recursively search for PATTERN in PATH. Like grep or ack, but faster.
 
 It is possible to restrict the types of files searched. For example, passing
 `--html` as the `file-types` parameter will search only files with the
-extensions `htm`, `html`, `shtml` or `xhtml`. For a list of supported `file-
-types` run `ag --list-file-types`.
+extensions `htm`, `html`, `shtml` or `xhtml`. For a list of supported `file-types`
+run `ag --list-file-types`.
 
 ## IGNORING FILES
 
