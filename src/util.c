@@ -1,14 +1,15 @@
 #include <ctype.h>
-#include <string.h>
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 
-#include "util.h"
 #include "config.h"
+#include "util.h"
 
 #ifdef _WIN32
+#include <windows.h>
 #define flockfile(x)
 #define funlockfile(x)
 #define getc_unlocked(x) getc(x)
@@ -147,14 +148,40 @@ size_t ag_max(size_t a, size_t b) {
     return a;
 }
 
+void generate_hash(const char *find, const size_t f_len, uint8_t *h_table, const int case_sensitive) {
+    int i;
+    for (i = f_len - sizeof(uint16_t); i >= 0; i--) {
+        // Add all 2^sizeof(uint16_t) combinations of capital letters to the hash table
+        int caps_set;
+        for (caps_set = 0; caps_set < (1 << sizeof(uint16_t)); caps_set++) {
+            word_t word;
+            memcpy(&word.as_chars, find + i, sizeof(uint16_t));
+            int cap_index;
+            // Capitalize the letters whose corresponding bits in caps_set are 1
+            for (cap_index = 0; caps_set >> cap_index; cap_index++) {
+                if ((caps_set >> cap_index) & 1)
+                    word.as_chars[cap_index] -= 'a' - 'A';
+            }
+            size_t h;
+            // Find next free cell
+            for (h = word.as_word % H_SIZE; h_table[h]; h = (h + 1) % H_SIZE)
+                ;
+            h_table[h] = i + 1;
+            // Don't add capital letters if case sensitive
+            if (case_sensitive)
+                break;
+        }
+    }
+}
+
 /* Boyer-Moore strstr */
 const char *boyer_moore_strnstr(const char *s, const char *find, const size_t s_len, const size_t f_len,
-                                const size_t alpha_skip_lookup[], const size_t *find_skip_lookup) {
+                                const size_t alpha_skip_lookup[], const size_t *find_skip_lookup, const int case_insensitive) {
     ssize_t i;
     size_t pos = f_len - 1;
 
     while (pos < s_len) {
-        for (i = f_len - 1; i >= 0 && s[pos] == find[i]; pos--, i--) {
+        for (i = f_len - 1; i >= 0 && (case_insensitive ? tolower(s[pos]) : s[pos]) == find[i]; pos--, i--) {
         }
         if (i < 0) {
             return s + pos + 1;
@@ -165,32 +192,42 @@ const char *boyer_moore_strnstr(const char *s, const char *find, const size_t s_
     return NULL;
 }
 
-/* Copy-pasted from above. Yes I know this is bad. One day I might even fix it. */
-const char *boyer_moore_strncasestr(const char *s, const char *find, const size_t s_len, const size_t f_len,
-                                    const size_t alpha_skip_lookup[], const size_t *find_skip_lookup) {
-    ssize_t i;
-    size_t pos = f_len - 1;
+// Clang's -fsanitize=alignment (included in -fsanitize=undefined) will flag
+// the intentional unaligned access here, so suppress it for this function
+NO_SANITIZE_ALIGNMENT const char *hash_strnstr(const char *s, const char *find, const size_t s_len, const size_t f_len, uint8_t *h_table, const int case_sensitive) {
+    if (s_len < f_len)
+        return NULL;
 
-    while (pos < s_len) {
-        for (i = f_len - 1; i >= 0 && tolower(s[pos]) == find[i]; pos--, i--) {
+    // Step through s
+    const size_t step = f_len - sizeof(uint16_t) + 1;
+    size_t s_i = f_len - sizeof(uint16_t);
+    for (; s_i <= s_len - f_len; s_i += step) {
+        size_t h;
+        for (h = *(const uint16_t *)(s + s_i) % H_SIZE; h_table[h]; h = (h + 1) % H_SIZE) {
+            const char *R = s + s_i - (h_table[h] - 1);
+            size_t i;
+            // Check putative match
+            for (i = 0; i < f_len; i++) {
+                if ((case_sensitive ? R[i] : tolower(R[i])) != find[i])
+                    goto next_hash_cell;
+            }
+            return R; // Found
+        next_hash_cell:;
         }
-        if (i < 0) {
-            return s + pos + 1;
-        }
-        pos += ag_max(alpha_skip_lookup[(unsigned char)s[pos]], find_skip_lookup[i]);
     }
-
+    // Check tail
+    for (s_i = s_i - step + 1; s_i <= s_len - f_len; s_i++) {
+        size_t i;
+        const char *R = s + s_i;
+        for (i = 0; i < f_len; i++) {
+            char s_c = case_sensitive ? R[i] : tolower(R[i]);
+            if (s_c != find[i])
+                goto next_start;
+        }
+        return R;
+    next_start:;
+    }
     return NULL;
-}
-
-strncmp_fp get_strstr(enum case_behavior casing) {
-    strncmp_fp ag_strncmp_fp = &boyer_moore_strnstr;
-
-    if (casing == CASE_INSENSITIVE) {
-        ag_strncmp_fp = &boyer_moore_strncasestr;
-    }
-
-    return ag_strncmp_fp;
 }
 
 size_t invert_matches(const char *buf, const size_t buf_len, match_t matches[], size_t matches_len) {
@@ -291,6 +328,7 @@ int is_binary(const void *buf, const size_t buf_len) {
     size_t i;
 
     if (buf_len == 0) {
+        /* Is an empty file binary? Is it text? */
         return 0;
     }
 
@@ -299,7 +337,7 @@ int is_binary(const void *buf, const size_t buf_len) {
         return 0;
     }
 
-    if (buf_len >= 4 && strncmp(buf, "%PDF-", 5) == 0) {
+    if (buf_len >= 5 && strncmp(buf, "%PDF-", 5) == 0) {
         /* PDF. This is binary. */
         return 1;
     }
@@ -379,7 +417,7 @@ int binary_search(const char *needle, char **haystack, int start, int end) {
         return -1;
     }
 
-    mid = (start + end) / 2; /* can screw up on arrays with > 2 billion elements */
+    mid = start + ((end - start) / 2);
 
     rc = strcmp(needle, haystack[mid]);
     if (rc < 0) {
@@ -435,13 +473,20 @@ int is_directory(const char *path, const struct dirent *d) {
         free(full_path);
         return FALSE;
     }
+#ifdef _WIN32
+    int is_dir = GetFileAttributesA(full_path) & FILE_ATTRIBUTE_DIRECTORY;
+#else
+    int is_dir = S_ISDIR(s.st_mode);
+#endif
     free(full_path);
-    return S_ISDIR(s.st_mode);
+    return is_dir;
 }
 
 int is_symlink(const char *path, const struct dirent *d) {
 #ifdef _WIN32
-    return 0;
+    char full_path[MAX_PATH + 1] = { 0 };
+    sprintf(full_path, "%s\\%s", path, d->d_name);
+    return (GetFileAttributesA(full_path) & FILE_ATTRIBUTE_REPARSE_POINT);
 #else
 #ifdef HAVE_DIRENT_DTYPE
     /* Some filesystems, e.g. ReiserFS, always return a type DT_UNKNOWN from readdir or scandir. */
@@ -465,7 +510,7 @@ int is_symlink(const char *path, const struct dirent *d) {
 int is_named_pipe(const char *path, const struct dirent *d) {
 #ifdef HAVE_DIRENT_DTYPE
     if (d->d_type != DT_UNKNOWN) {
-        return d->d_type == DT_FIFO;
+        return d->d_type == DT_FIFO || d->d_type == DT_SOCK;
     }
 #endif
     char *full_path;
@@ -476,7 +521,11 @@ int is_named_pipe(const char *path, const struct dirent *d) {
         return FALSE;
     }
     free(full_path);
-    return S_ISFIFO(s.st_mode);
+    return S_ISFIFO(s.st_mode)
+#ifdef S_ISSOCK
+           || S_ISSOCK(s.st_mode)
+#endif
+        ;
 }
 
 void ag_asprintf(char **ret, const char *fmt, ...) {

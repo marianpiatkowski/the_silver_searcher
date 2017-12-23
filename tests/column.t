@@ -1,7 +1,7 @@
 Setup:
 
   $ . $TESTDIR/setup.sh
-  $ echo "blah\nblah2" > blah.txt
+  $ printf "blah\nblah2\n" > blah.txt
 
 Ensure column is correct:
 
@@ -12,7 +12,7 @@ Ensure column is correct:
 # Test ackmate output. Not quite right, but at least offsets are in the
 # ballpark instead of being 9 quintillion
 
-  $ ag --ackmate "blah\nb"
+  $ ag --ackmate "lah\nb"
   :blah.txt
   1;blah
-  2;0 6:blah2
+  2;1 5:blah2

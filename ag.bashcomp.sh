@@ -129,4 +129,7 @@ _ag() {
           return 0;;
   esac
 } &&
+
+# shellcheck disable=SC2086
+# shellcheck disable=SC2154,SC2086
 complete -F _ag ${nospace} ag

@@ -1,8 +1,8 @@
 Setup:
 
   $ . $TESTDIR/setup.sh
-  $ alias ag="$TESTDIR/../ag --workers=1 --parallel --color"
-  $ echo blahfoofooblah > ./fooblah.txt
+  $ alias ag="$TESTDIR/../ag --noaffinity --workers=1 --parallel --color"
+  $ printf 'blahfoofooblah\n' > ./fooblah.txt
 
 Highlights are adjacent:
 
