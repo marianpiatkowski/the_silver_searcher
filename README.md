@@ -132,7 +132,7 @@ or
     * CentOS:
 
             yum -y groupinstall "Development Tools"
-            yum -y install pcre-devel xz-devel
+            yum -y install pcre-devel xz-devel zlib-devel
     * openSUSE:
 
             zypper source-install --build-deps-only the_silver_searcher
@@ -168,7 +168,7 @@ You may need to use `sudo` or run as root for the make install.
 
 ### Vim
 
-You can use Ag with [ack.vim][] by adding the following line to your `.vimrc`:
+You can use Ag with [ack.vim](https://github.com/mileszs/ack.vim) by adding the following line to your `.vimrc`:
 
     let g:ackprg = 'ag --nogroup --nocolor --column'
 
