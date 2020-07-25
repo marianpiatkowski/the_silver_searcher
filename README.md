@@ -189,6 +189,15 @@ You can use [ag.el][] as an Emacs front-end to Ag. See also: [helm-ag].
 
 TextMate users can use Ag with [my fork](https://github.com/ggreer/AckMate) of the popular AckMate plugin, which lets you use both Ack and Ag for searching. If you already have AckMate you just want to replace Ack with Ag, move or delete `"~/Library/Application Support/TextMate/PlugIns/AckMate.tmplugin/Contents/Resources/ackmate_ack"` and run `ln -s /usr/local/bin/ag "~/Library/Application Support/TextMate/PlugIns/AckMate.tmplugin/Contents/Resources/ackmate_ack"`
 
+## Possible customizations of Ag
+
+Go check out [ag.1.md](doc/ag.1.md) for a list of configurable options.
+For example, if you want output similar to ``git grep``
+
+    ag --pager="less -FRSX" --color-line-number="0;32" --color-match="1;31" --color-path="0;35"
+
+where line numbers are printed in green, matched patterns in bold red, and paths in magenta color.
+
 ## Other stuff you might like
 
 * [Ack](https://github.com/petdance/ack2) - Better than grep. Without Ack, Ag would not exist.
