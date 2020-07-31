@@ -15,6 +15,7 @@
 #include "options.h"
 #include "print.h"
 #include "util.h"
+#include "readconfig.h"
 
 const char *color_line_number = "\033[0;32m"; /* green */
 const char *color_match = "\033[1;31m";      /* bold red */
@@ -350,6 +351,9 @@ void parse_options(int argc, char **argv, char **base_paths[], char **paths[]) {
         cleanup_options();
         exit(1);
     }
+
+    if(!read_config())
+      exit(1);
 
     rv = fstat(fileno(stdin), &statbuf);
     if (rv == 0) {
