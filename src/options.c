@@ -1,3 +1,4 @@
+// -*- tab-width: 4; indent-tabs-mode: nil -*-
 #include <errno.h>
 #include <limits.h>
 #include <stdarg.h>
