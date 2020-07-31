@@ -558,7 +558,8 @@ void parse_options(int argc, char **argv, char **base_paths[], char **paths[]) {
                     opts.pager = NULL;
                     break;
                 } else if (strcmp(longopts[opt_index].name, "pager") == 0) {
-                    opts.pager = optarg;
+                    free(opts.pager);
+                    opts.pager = ag_strdup(optarg);
                     break;
                 } else if (strcmp(longopts[opt_index].name, "print-all-files") == 0) {
                     opts.print_all_paths = TRUE;
