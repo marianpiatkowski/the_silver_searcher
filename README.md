@@ -192,7 +192,7 @@ TextMate users can use Ag with [my fork](https://github.com/ggreer/AckMate) of t
 ## Possible customizations of Ag
 
 Go check out [ag.1.md](doc/ag.1.md) for a list of configurable options.
-For example, if you want output similar to ``git grep``
+For example, if you want output similar to ``git grep``:
 
     ag --pager="less -FRSX" --color-line-number="0;32" --color-match="1;31" --color-path="0;35"
 
